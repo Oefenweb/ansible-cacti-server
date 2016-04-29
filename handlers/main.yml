@@ -1,0 +1,6 @@
+# handlers file for cacti-server
+---
+- name: reload apache2
+  service:
+    name: apache2
+    state: reloaded

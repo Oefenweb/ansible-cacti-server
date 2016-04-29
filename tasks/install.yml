@@ -1,0 +1,26 @@
+# tasks file for cacti-server
+---
+- name: install | configure debconf
+  debconf:
+    name: "{{ item.name }}"
+    question: "{{ item.question }}"
+    value: "{{ item.value }}"
+    vtype: "{{ item.vtype }}"
+  with_items: cacti_server_debconf_selections
+  tags: [cacti-server-install-configure debconf]
+
+- name: install | dependencies
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items: cacti_server_dependencies
+  tags:
+    - cacti-server-install-dependencies
+
+- name: install | additional
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items: cacti_server_install
+  tags:
+    - cacti-server-install-additional

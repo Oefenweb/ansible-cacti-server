@@ -1,0 +1,7 @@
+# test file for cacti-server
+---
+- hosts: localhost
+  connection: local
+  sudo: true
+  roles:
+    - ../../

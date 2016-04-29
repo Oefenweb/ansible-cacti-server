@@ -1,0 +1,13 @@
+# tasks file for cacti-server
+---
+- include: install.yml
+  tags:
+    - configuration
+    - cacti-server
+    - cacti-server-install
+
+- include: configure.yml
+  tags:
+    - configuration
+    - cacti-server
+    - cacti-server-configure

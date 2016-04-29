@@ -1,0 +1,7 @@
+# test file for cacti-server
+---
+- hosts: all
+  remote_user: vagrant
+  sudo: true
+  roles:
+    - ../../

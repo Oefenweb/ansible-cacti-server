@@ -1,0 +1,32 @@
+# vars file for cacti-server
+---
+cacti_server_percona_repositories:
+  - type: deb
+    url: "http://repo.percona.com/apt {{ ansible_lsb.codename }}"
+    component: main
+  - type: deb-src
+    url: "http://repo.percona.com/apt {{ ansible_lsb.codename }}"
+    component: main
+
+cacti_server_dependencies:
+  - python-mysqldb
+  - cacti
+  - cacti-spine
+
+cacti_server_debconf_selections:
+ - name: cacti
+   question: cacti/dbconfig-install
+   value: true
+   vtype: boolean
+ - name: cacti
+   question: cacti/mysql/admin-pass
+   value: "{{ cacti_server_root_dbpass }}"
+   vtype: password
+ - name: cacti
+   question: cacti/mysql/admin-user
+   value: root
+   vtype: string
+ - name: cacti
+   question: cacti/webserver
+   value: apache2
+   vtype: select

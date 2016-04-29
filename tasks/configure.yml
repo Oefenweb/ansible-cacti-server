@@ -1,0 +1,41 @@
+# tasks file for cacti-server
+---
+- name: configure | chmod spine
+  command: chmod u+s /usr/sbin/spine
+  tags: [cacti-server-confgure-chmod-spine]
+
+- name: configure | update ssh configuration file
+  template:
+    src: etc/cacti/ss_get_by_ssh.php.cnf.j2
+    dest: /etc/cacti/ss_get_by_ssh.php.cnf
+    owner: root
+    group: www-data
+    mode: 0640
+  tags: [cacti-server-confgure-update-ssh-configuration-file]
+
+- name: configure | update database configuration file
+  template:
+    src: etc/cacti/debian.php.j2
+    dest: /etc/cacti/debian.php
+    owner: root
+    group: root
+    mode: 0644
+  tags: [cacti-server-confgure-update-database-configuration-file]
+
+- name: configure | update mysql configuration file
+  template:
+    src: etc/cacti/ss_get_mysql_stats.php.cnf.j2
+    dest: /etc/cacti/ss_get_mysql_stats.php.cnf
+    owner: root
+    group: root
+    mode: 0644
+  tags: [cacti-server-confgure-update-mysql-configuration-file]
+
+- name: configure | reset cacti database user password
+  mysql_user:
+    name: "{{ cacti_server_server_dbuser }}"
+    password: "{{ cacti_server_server_dbpass }}"
+    priv: "cacti.*:ALL"
+    host: localhost
+    state: present
+  tags: [cacti-server-confgure-reset-cacti-database-user-password]
