@@ -1,5 +1,23 @@
 # tasks file for cacti-server
 ---
+- name: install | create dbconfig-common directory
+  file:
+    path: /etc/dbconfig-common
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags: [cacti-server-configure-create-dbconfig-common-directory]
+
+- name: install | update dbconfig-common file
+  template:
+    src: etc/dbconfig-common/cacti.conf.j2
+    dest: /etc/dbconfig-common/cacti.conf
+    owner: root
+    group: root
+    mode: 0600
+  tags: [cacti-server-configure-update-dbconfig-common-file]
+
 - name: install | configure debconf
   debconf:
     name: "{{ item.name }}"

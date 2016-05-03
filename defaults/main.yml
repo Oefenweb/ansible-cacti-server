@@ -4,5 +4,7 @@ cacti_server_root_dbpass: vagrant
 
 cacti_server_install: []
 
+cacti_server_admin_password: admin
+
 cacti_server_server_dbuser: cacti
 cacti_server_server_dbpass: 'CaRaStazaph3STat'

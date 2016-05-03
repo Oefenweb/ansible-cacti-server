@@ -14,6 +14,8 @@ None
 
 * `cacti_server_install`: [default: `[]`]: Additional packages to install
 
+* `cacti_server_admin_password`: [default: `admin`]: Cacti admin user password
+
 * `cacti_server_server_dbuser`: [required]: Cacti user database username
 * `cacti_server_server_dbpass`: [required]: Cacti user database password
 

@@ -4,7 +4,7 @@
   command: chmod -v u+s /usr/sbin/spine
   register: file_permissions
   changed_when: "'changed' in file_permissions.stdout"
-  tags: [cacti-server-confgure-chmod-spine]
+  tags: [cacti-server-configure-chmod-spine]
 
 - name: configure | update database configuration file
   template:
@@ -13,13 +13,36 @@
     owner: root
     group: root
     mode: 0644
-  tags: [cacti-server-confgure-update-database-configuration-file]
+  tags: [cacti-server-configure-update-database-configuration-file]
 
-- name: configure | reset cacti database user password
-  mysql_user:
-    name: "{{ cacti_server_server_dbuser }}"
-    password: "{{ cacti_server_server_dbpass }}"
-    priv: "cacti.*:ALL"
-    host: localhost
-    state: present
-  tags: [cacti-server-confgure-reset-cacti-database-user-password]
+- name: configure | get current cacti version
+  shell: grep '$config\["cacti_version"\] =' {{ item }} | sed 's/$config\[\"cacti_version\"\] \= "//g;s/";//g'
+  register: current_version
+  with_items:
+    - /usr/share/cacti/site/include/global.php
+  changed_when: false
+  tags: [cacti-server-configure-get-current-cacti-version]
+
+- name: configure | set cacti version in database
+  command: "mysql --database=\"cacti\" -e \"UPDATE version SET cacti = '{{ current_version.results.0.stdout }}' WHERE cacti = 'new_install'; SELECT ROW_COUNT();\" --skip-column-names"
+  register: rows_affected
+  changed_when: "rows_affected.stdout | int > 0"
+  tags: [cacti-server-configure-set-cacti-version-in-database]
+
+- name: configure | change password database user admin
+  command: "mysql --database=\"cacti\" -e \"UPDATE user_auth SET password = md5('{{ cacti_server_admin_password }}'), must_change_password = '' WHERE username = 'admin' AND must_change_password = 'on'; SELECT ROW_COUNT();\" --skip-column-names"
+  register: rows_affected
+  changed_when: "rows_affected.stdout | int > 0"
+  tags: [cacti-server-configure-change-password-database-user-admin]
+
+- name: configure | convert databases to innodb
+  shell: php convert_innodb.php
+  args:
+    chdir: /usr/share/cacti/cli
+  tags: [cacti-server-configure-convert-databases-to-innodb]
+
+- name: configure | rebuild poller cache
+  shell: php rebuild_poller_cache.php
+  args:
+    chdir: /usr/share/cacti/cli
+  tags: [cacti-server-configure-rebuild-poller-cache]
