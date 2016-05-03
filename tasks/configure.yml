@@ -39,10 +39,12 @@
   shell: php convert_innodb.php
   args:
     chdir: /usr/share/cacti/cli
+  when: "rows_affected.stdout | int > 0"
   tags: [cacti-server-configure-convert-databases-to-innodb]
 
 - name: configure | rebuild poller cache
   shell: php rebuild_poller_cache.php
   args:
     chdir: /usr/share/cacti/cli
+  when: "rows_affected.stdout | int > 0"
   tags: [cacti-server-configure-rebuild-poller-cache]
