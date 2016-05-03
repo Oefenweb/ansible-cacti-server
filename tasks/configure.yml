@@ -1,7 +1,9 @@
 # tasks file for cacti-server
 ---
 - name: configure | chmod spine
-  command: chmod u+s /usr/sbin/spine
+  command: chmod -v u+s /usr/sbin/spine
+  register: file_permissions
+  changed_when: "'changed' in file_permissions.stdout"
   tags: [cacti-server-confgure-chmod-spine]
 
 - name: configure | update database configuration file
