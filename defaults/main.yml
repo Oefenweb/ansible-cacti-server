@@ -1,2 +1,3 @@
 # defaults file for cacti-server
 ---
+cacti_server_version: 1.2.7

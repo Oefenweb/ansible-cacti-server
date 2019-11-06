@@ -1,2 +1,39 @@
 # tasks file for cacti-server
 ---
+# TODO: Check for first install
+
+- name: install dependencies
+  apt:
+    name: "{{ item }}"
+    state: "{{ apt_install_state | default('latest') }}"
+    update_cache: true
+    cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
+  with_items: "{{ cacti_server_dependencies }}"
+  tags:
+    - configuration
+    - cacti-server
+    - cacti-server-dependencies
+
+- name: create (checkout) directory
+  file:
+    path: "{{ cacti_server_checkout_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - configuration
+    - cacti-server
+    - cacti-server-checkout
+
+- name: checkout repository
+  git:
+    repo: "{{ cacti_server_checkout_repo }}"
+    dest: "{{ cacti_server_checkout_path }}"
+    version: "release/{{ cacti_server_version }}"
+    force: true
+  register: _git_checkout
+  tags:
+    - configuration
+    - cacti-server
+    - cacti-server-checkout

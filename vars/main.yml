@@ -1,3 +1,8 @@
 # vars file for cacti-server
 ---
-cacti_server_dependencies: []
+cacti_server_dependencies:
+  - git-core
+  - rrdtool
+
+cacti_server_checkout_repo: https://github.com/Cacti/cacti.git
+cacti_server_checkout_path: /var/lib/ansible/cacti-server/checkouts/cacti
