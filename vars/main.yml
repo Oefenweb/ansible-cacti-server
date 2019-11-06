@@ -6,3 +6,8 @@ cacti_server_dependencies:
 
 cacti_server_checkout_repo: https://github.com/Cacti/cacti.git
 cacti_server_checkout_path: /var/lib/ansible/cacti-server/checkouts/cacti
+
+cacti_server_user: www-data
+cacti_server_group: www-data
+
+cacti_server_config_file: "{{ cacti_server_checkout_path }}/include/config.php"

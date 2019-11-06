@@ -37,3 +37,53 @@
     - configuration
     - cacti-server
     - cacti-server-checkout
+
+####
+
+- name: create (writable) directories
+  file:
+    path: "{{ cacti_server_checkout_path }}/{{ item }}/"
+    state: directory
+    owner: "{{ cacti_server_user }}"
+    group: "{{ cacti_server_group }}"
+    mode: 0755
+  with_items:
+    - cache
+    - rra
+    - log
+  tags:
+    - configuration
+    - cacti-server
+    - cacti-server-checkout
+
+- name: update conf file
+  template:
+    src: "{{ cacti_server_config_file.lstrip('/') }}.j2"
+    dest: "{{ cacti_server_config_file }}"
+    owner: root
+    group: root
+    mode: 0640
+    validate: 'php -l %s'
+  tags:
+    - configuration
+    - cacti-server
+    - cacti-server-update-conf-file
+
+# TODO: Revert after install
+
+- name: make directories writable (for install)
+  file:
+    path: "{{ cacti_server_checkout_path }}/{{ item }}/"
+    state: directory
+    owner: "{{ cacti_server_user }}"
+    group: "{{ cacti_server_group }}"
+    recurse: true
+  with_items:
+    - resource/snmp_queries
+    - resource/script_server
+    - resource/script_queries
+    - scripts
+  tags:
+    - configuration
+    - cacti-server
+    - cacti-server-checkout
