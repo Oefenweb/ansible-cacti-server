@@ -61,7 +61,7 @@
     src: "{{ cacti_server_config_file.lstrip('/') }}.j2"
     dest: "{{ cacti_server_config_file }}"
     owner: root
-    group: root
+    group: "{{ cacti_server_group }}"
     mode: 0640
     validate: 'php -l %s'
   tags:
