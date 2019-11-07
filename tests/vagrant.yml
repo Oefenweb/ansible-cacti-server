@@ -8,3 +8,5 @@
   roles:
     - ../../
   vars:
+    cacti_server_config_database_username: cacti
+    cacti_server_config_database_password: cacti
