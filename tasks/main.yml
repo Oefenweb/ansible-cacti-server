@@ -2,13 +2,20 @@
 ---
 # TODO: Check for first install
 
+- name: check php
+  command: >
+    which php
+
+- name: check mysqld
+  command: >
+    which mysqld
+
 - name: install dependencies
   apt:
-    name: "{{ item }}"
+    name: "{{ cacti_server_dependencies }}"
     state: "{{ apt_install_state | default('latest') }}"
     update_cache: true
     cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
-  with_items: "{{ cacti_server_dependencies }}"
   tags:
     - configuration
     - cacti-server
@@ -18,9 +25,9 @@
   file:
     path: "{{ cacti_server_checkout_path }}"
     state: directory
-    owner: root
-    group: root
-    mode: 0755
+    owner: "{{ cacti_server_default_owner }}"
+    group: "{{ cacti_server_default_group }}"
+    mode: "{{ cacti_server_default_directory_mode }}"
   tags:
     - configuration
     - cacti-server
@@ -46,7 +53,7 @@
     state: directory
     owner: "{{ cacti_server_user }}"
     group: "{{ cacti_server_group }}"
-    mode: 0755
+    recurse: true
   with_items:
     - cache
     - rra
@@ -60,7 +67,7 @@
   template:
     src: "{{ cacti_server_config_file.lstrip('/') }}.j2"
     dest: "{{ cacti_server_config_file }}"
-    owner: root
+    owner: "{{ cacti_server_default_owner }}"
     group: "{{ cacti_server_group }}"
     mode: 0640
     validate: 'php -l %s'
@@ -87,3 +94,18 @@
     - configuration
     - cacti-server
     - cacti-server-checkout
+
+- name: check database
+  command: >
+    mysql -Bse "SHOW DATABASES LIKE 'cacti';"
+  register: _database
+  changed_when: false
+
+- name: import cacti.sql
+  mysql_db:
+    state: import
+    name: "{{ cacti_server_config_database_default }}"
+    target: "{{ cacti_server_checkout_path }}/cacti.sql"
+  when: _database.stdout_lines | length
+
+# TODO: poller

@@ -4,9 +4,12 @@
   remote_user: vagrant
   become: true
   pre_tasks:
+    - include_vars: main.yml
     - include: pre.yml
   roles:
     - ../../
+  handlers:
+    - include: handlers/main.yml
   vars:
     cacti_server_config_database_username: cacti
     cacti_server_config_database_password: cacti

@@ -2,10 +2,17 @@
 ---
 cacti_server_dependencies:
   - git-core
+  - snmp
+  - snmp-mibs-downloader
   - rrdtool
 
 cacti_server_checkout_repo: https://github.com/Cacti/cacti.git
 cacti_server_checkout_path: /var/lib/ansible/cacti-server/checkouts/cacti
+
+cacti_server_default_owner: root
+cacti_server_default_group: root
+cacti_server_default_directory_mode: '0755'
+cacti_server_default_file_mode: '0644'
 
 cacti_server_user: www-data
 cacti_server_group: www-data
