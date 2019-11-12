@@ -4,8 +4,10 @@ cacti_server_version: 1.2.7
 
 cacti_server_config_database_default: cacti
 cacti_server_config_database_hostname: localhost
-cacti_server_config_database_username: cactiuser
-cacti_server_config_database_password: cactiuser
+cacti_server_config_database_username: cacti
+cacti_server_config_database_password: cacti
 cacti_server_config_database_port: 3306
 
 cacti_server_config_url_path: /cacti/
+
+cacti_server_use_poller_php: true

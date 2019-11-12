@@ -5,10 +5,12 @@
 - name: check php
   command: >
     which php
+  changed_when: false
 
 - name: check mysqld
   command: >
     which mysqld
+  changed_when: false
 
 - name: install dependencies
   apt:
@@ -97,15 +99,33 @@
 
 - name: check database
   command: >
-    mysql -Bse "SHOW DATABASES LIKE 'cacti';"
+    mysql -Bse "SHOW DATABASES LIKE '{{ cacti_server_config_database_default }}';"
   register: _database
   changed_when: false
+
+- name: check version
+  command: >
+    mysql -Bse "SELECT `cacti` FROM `{{ cacti_server_config_database_default }}`.`version` LIMIT 1;"
+  register: _version
+  changed_when: false
+  failed_when: false
 
 - name: import cacti.sql
   mysql_db:
     state: import
     name: "{{ cacti_server_config_database_default }}"
     target: "{{ cacti_server_checkout_path }}/cacti.sql"
-  when: _database.stdout_lines | length
+  when:
+    # database is found
+    - _database.stdout_lines | default([]) | length
+    # table is not found
+    - (_version.stdout_lines | default([]) | length) == 0
 
-# TODO: poller
+- name: poller.php
+  cron:
+    name: poller.php
+    job: "{{ cacti_server_checkout_path }}/poller.php > /dev/null 2>&1"
+    minute: "*/5"
+    state: "{{ cacti_server_use_poller_php | ternary('present', 'absent') }}"
+    cron_file: cacti
+    user: "{{ cacti_server_user }}"
