@@ -124,7 +124,7 @@
 - name: poller.php
   cron:
     name: poller.php
-    job: "{{ cacti_server_checkout_path }}/poller.php > /dev/null 2>&1"
+    job: "php {{ cacti_server_checkout_path }}/poller.php > /dev/null 2>&1"
     minute: "*/5"
     state: "{{ cacti_server_use_poller_php | ternary('present', 'absent') }}"
     cron_file: cacti
