@@ -5,9 +5,11 @@
   with_items:
     - "{{ ansible_user_id }}"
     - "{{ lookup('env', 'USER') }}"
-    - "{{ ansible_env.username }}"
 - shell: >
     whoami
+  register: _whoami
+- debug:
+    msg: "{{ _whoami.stdout }}"
 - fail:
     msg: fail
 
