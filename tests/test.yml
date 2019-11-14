@@ -4,6 +4,10 @@
   connection: local
   become: true
   pre_tasks:
+    - debug:
+        msg: "{{ ansible_user_id }}"
+    - debug:
+        msg: "{{ lookup('env','USER') }}"
     - include_vars: main.yml
     - include: pre.yml
   roles:
