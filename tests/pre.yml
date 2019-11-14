@@ -1,5 +1,16 @@
 # pre test file for cacti-server
 ---
+- debug:
+    msg: "{{ item }}"
+  with_items:
+    - "{{ ansible_user_id }}"
+    - "{{ lookup('env', 'USER') }}"
+    - "{{ ansible_env.username }}"
+- shell: >
+    whoami
+- fail:
+    msg: fail
+
 - name: percona repo
   apt:
     deb: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_lsb.codename }}_all.deb"
