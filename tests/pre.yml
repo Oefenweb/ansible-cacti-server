@@ -27,6 +27,12 @@
     update_cache: true
     cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
 
+- name: install php
+  service:
+    name: apache2
+    enabled: true
+    state: started
+
 - name: install percona server
   debconf:
     name: "{{ item.name }}"
@@ -52,6 +58,12 @@
       - libperconaserverclient20
       - python-mysqldb
     state: "{{ apt_install_state | default('latest') }}"
+
+- name: install percona server
+  service:
+    name: mysql
+    enabled: true
+    state: started
 
 - name: install percona server
   copy:
