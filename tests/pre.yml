@@ -57,21 +57,26 @@
       - python-mysqldb
     state: "{{ apt_install_state | default('latest') }}"
 
-- name: install percona server
-  copy:
-    dest: "{{ item }}"
-    content: |
-      [client]
-      host = localhost
-      port = 3306
-      user = root
-      password = '{{ cacti_server_percona_server_root_password }}'
-    owner: root
-    group: root
-    mode: 0600
-  with_items:
-    - "~root/.my.cnf"
-    - "~travis/.my.cnf"
+#- name: install percona server
+#    service:
+#      name: mysql
+#      state: restarted
+#
+#- name: install percona server
+#  copy:
+#    dest: "{{ item }}"
+#    content: |
+#      [client]
+#      host = localhost
+#      port = 3306
+#      user = root
+#      password = '{{ cacti_server_percona_server_root_password }}'
+#    owner: root
+#    group: root
+#    mode: 0600
+#  with_items:
+#    - "~root/.my.cnf"
+#    - "~travis/.my.cnf"
 
 - name: debug
   shell: >
