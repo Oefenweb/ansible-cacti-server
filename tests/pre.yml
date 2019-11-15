@@ -59,7 +59,7 @@
 
 - name: install percona server
   copy:
-    dest: "~root/.my.cnf"
+    dest: "{{ item }}"
     content: |
       [client]
       host = localhost
@@ -69,6 +69,9 @@
     owner: root
     group: root
     mode: 0600
+  with_items:
+    - "~root/.my.cnf"
+    - "~travis/.my.cnf"
 
 - name: debug
   shell: >
