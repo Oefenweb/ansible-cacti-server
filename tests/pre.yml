@@ -70,6 +70,16 @@
     group: root
     mode: 0600
 
+- name: debug
+  shell: >
+    {{ item }};
+  with_items:
+    - netstat -plant
+    - service mysql status
+    - ps aux | grep '[m]ysql'
+    - mysqladmin ping
+    - mysqladmin -uroot -proot ping {{ cacti_server_percona_server_root_password }}
+
 - name: zoneinfo
   shell: >
     mysql_tzinfo_to_sql /usr/share/zoneinfo | tee /tmp/zoneinfo.sql | mysql --database=mysql
