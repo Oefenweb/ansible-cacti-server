@@ -1,9 +1,5 @@
 # pre test file for cacti-server
 ---
-- name: set facts
-  set_fact:
-    _whoami: "{{ (ansible_connection == 'ssh') | ternary(ansible_user_id, lookup('env', 'USER')) }}"
-
 - name: percona repo
   apt:
     deb: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_lsb.codename }}_all.deb"
@@ -57,45 +53,18 @@
       - python-mysqldb
     state: "{{ apt_install_state | default('latest') }}"
 
-#- name: install percona server
-#    service:
-#      name: mysql
-#      state: restarted
-#
-#- name: install percona server
-#  copy:
-#    dest: "{{ item }}"
-#    content: |
-#      [client]
-#      host = localhost
-#      port = 3306
-#      user = root
-#      password = '{{ cacti_server_percona_server_root_password }}'
-#    owner: root
-#    group: root
-#    mode: 0600
-#  with_items:
-#    - "~root/.my.cnf"
-#    - "~travis/.my.cnf"
-
-- name: debug
-  shell: >
-    {{ item }};
-  with_items:
-    - netstat -plant
-    - service mysql status
-    - ps aux | grep '[m]ysql'
-
-    - ls -lhaR /etc/mysql
-
-    - cat /etc/mysql/my.cnf
-    - cat /etc/mysql/conf.d/*
-    - cat /etc/mysql/percona-server.cnf
-    - cat /etc/mysql/percona-server.conf.d/*
-
-    - mysqladmin ping
-    - mysqladmin -uroot ping
-    - mysqladmin -uroot -p{{ cacti_server_percona_server_root_password }} ping
+- name: install percona server
+  copy:
+    dest: '~root/.my.cnf'
+    content: |
+      [client]
+      host = localhost
+      port = 3306
+      user = root
+      password = '{{ (lookup('env', 'USER') == 'travis') | ternary('', cacti_server_percona_server_root_password) }}'
+    owner: root
+    group: root
+    mode: 0600
 
 - name: zoneinfo
   shell: >
