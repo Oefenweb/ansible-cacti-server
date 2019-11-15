@@ -59,7 +59,7 @@
 
 - name: install percona server
   copy:
-    dest: "~{{ _whoami }}/.my.cnf"
+    dest: "~root/.my.cnf"
     content: |
       [client]
       host = localhost
