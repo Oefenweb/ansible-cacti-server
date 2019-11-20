@@ -1,15 +1,15 @@
 # pre test file for cacti-server
 ---
-- name: percona repo
+- name: pre | percona server | add repo
   apt:
     deb: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_lsb.codename }}_all.deb"
 
-- name: add ondrej repo
+- name: pre | php | add repo
   apt_repository:
     repo: ppa:ondrej/php
     update_cache: true
 
-- name: install php
+- name: pre | php | install
   apt:
     name:
       - apache2
@@ -28,7 +28,7 @@
     update_cache: true
     cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
 
-- name: install percona server
+- name: pre | percona server | preseed
   debconf:
     name: "{{ item.name }}"
     question: "{{ item.question }}"
@@ -45,7 +45,7 @@
       vtype: password
   changed_when: false
 
-- name: install percona server
+- name: pre | percona server | install
   apt:
     name:
       - percona-server-client-5.7
@@ -54,7 +54,7 @@
       - python-mysqldb
     state: "{{ apt_install_state | default('latest') }}"
 
-- name: install percona server
+- name: pre | percona server | configure
   copy:
     dest: '~root/.my.cnf'
     content: |
@@ -67,25 +67,25 @@
     group: root
     mode: 0600
 
-- name: zoneinfo
+- name: pre | percona server | add zoneinfo
   shell: >
     mysql_tzinfo_to_sql /usr/share/zoneinfo | tee /tmp/zoneinfo.sql | mysql --database=mysql
   args:
     creates: /tmp/zoneinfo.sql
 
-- name: ensure database
+- name: pre | percona server | ensure database
   mysql_db:
     name: "{{ cacti_server_config_database_default }}"
     encoding: utf8mb4
     collation: utf8mb4_unicode_ci
 
-- name: ensure grants
+- name: pre | percona server | ensure grants
   mysql_user:
     name: "{{ cacti_server_config_database_username }}"
     password: "{{ cacti_server_config_database_password }}"
     priv: "{{ cacti_server_config_database_default }}.*:ALL/mysql.time_zone_name:SELECT"
 
-- name: memory_limit
+- name: pre | php | configure memory_limit
   lineinfile:
     path: "/etc/php/7.1/{{ item }}/php.ini"
     regexp: '^memory_limit = .*'
@@ -94,7 +94,7 @@
   with_items:
     - apache2
 
-- name: max_execution_time
+- name: pre | php | configure max_execution_time
   lineinfile:
     path: "/etc/php/7.1/{{ item }}/php.ini"
     regexp: '^max_execution_time = .*'
@@ -103,7 +103,7 @@
   with_items:
     - apache2
 
-- name: timezone
+- name: pre | php | configure timezone
   lineinfile:
     path: "/etc/php/7.1/{{ item }}/php.ini"
     line: 'date.timezone = Europe/Amsterdam'
@@ -113,7 +113,7 @@
     - apache2
     - cli
 
-- name: encoding
+- name: pre | percona server | configure encoding
   lineinfile:
     path: /etc/mysql/percona-server.conf.d/mysqld.cnf
     line: "{{ item }}"
