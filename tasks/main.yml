@@ -1,27 +1,16 @@
 # tasks file for cacti-server
 ---
-# TODO: Check for first install
-
-- name: check | php
-  command: >
-    which php
-  changed_when: false
-
-- name: check | mysqld
-  command: >
-    which mysqld
-  changed_when: false
-
-- name: install | dependencies
-  apt:
-    name: "{{ cacti_server_dependencies }}"
-    state: "{{ apt_install_state | default('latest') }}"
-    update_cache: true
-    cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
+- include: check.yml
   tags:
     - configuration
     - cacti-server
-    - cacti-server-dependencies
+    - cacti-server-check
+
+- include: install.yml
+  tags:
+    - configuration
+    - cacti-server
+    - cacti-server-install
 
 - name: create (checkout) directory
   file:
@@ -94,19 +83,6 @@
     - configuration
     - cacti-server
     - cacti-server-checkout
-
-- name: check | database
-  command: >
-    mysql -Bse "SHOW DATABASES LIKE '{{ cacti_server_config_database_default }}';"
-  register: _database
-  changed_when: false
-
-- name: check | version
-  command: >
-    mysql -Bse "SELECT `cacti` FROM `{{ cacti_server_config_database_default }}`.`version` LIMIT 1;"
-  register: _version
-  changed_when: false
-  failed_when: false
 
 - name: import cacti.sql
   mysql_db:

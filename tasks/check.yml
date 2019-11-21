@@ -1,0 +1,34 @@
+# tasks file for cacti-server
+---
+# TODO: Check for first install
+
+- name: check | php
+  command: >
+    which php
+  changed_when: false
+  tags:
+    - cacti-server-check-php
+
+- name: check | mysqld
+  command: >
+    which mysqld
+  changed_when: false
+  tags:
+    - cacti-server-check-mysqld
+
+- name: check | database
+  command: >
+    mysql -Bse "SHOW DATABASES LIKE '{{ cacti_server_config_database_default }}';"
+  register: _database
+  changed_when: false
+  tags:
+    - cacti-server-check-database
+
+- name: check | version
+  command: >
+    mysql -Bse "SELECT `cacti` FROM `{{ cacti_server_config_database_default }}`.`version` LIMIT 1;"
+  register: _version
+  changed_when: false
+  failed_when: false
+  tags:
+    - cacti-server-check-version

@@ -11,3 +11,5 @@ cacti_server_config_database_port: 3306
 cacti_server_config_url_path: /cacti/
 
 cacti_server_use_poller_php: true
+
+cacti_server_install: []
