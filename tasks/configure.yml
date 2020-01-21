@@ -1,0 +1,54 @@
+# tasks file for cacti-server
+---
+- name: configure | create (permanent) rw directories
+  file:
+    path: "{{ cacti_server_checkout_path }}/{{ item }}/"
+    state: directory
+    owner: "{{ cacti_server_user }}"
+    group: "{{ cacti_server_group }}"
+    recurse: true
+  with_items:
+    - cache
+    - rra
+    - log
+  tags:
+    - cacti-server-pre-create-permanent-rw-directories
+
+- name: configure | update config file
+  template:
+    src: "{{ cacti_server_config_file.lstrip('/') }}.j2"
+    dest: "{{ cacti_server_config_file }}"
+    owner: "{{ cacti_server_default_owner }}"
+    group: "{{ cacti_server_group }}"
+    mode: 0640
+    validate: 'php -l %s'
+  tags:
+    - cacti-server-pre-update-config-file
+
+- name: configure | create (temporary) rw directories
+  file:
+    path: "{{ cacti_server_checkout_path }}/{{ item }}/"
+    state: directory
+    owner: "{{ cacti_server_user }}"
+    group: "{{ cacti_server_group }}"
+    recurse: true
+  with_items:
+    - resource/snmp_queries
+    - resource/script_server
+    - resource/script_queries
+    - scripts
+  tags:
+    - cacti-server-pre-create-temporary-rw-directories
+
+- name: configure | import cacti.sql
+  mysql_db:
+    state: import
+    name: "{{ cacti_server_config_database_default }}"
+    target: "{{ cacti_server_checkout_path }}/cacti.sql"
+  when:
+    # database is found
+    - _database.stdout_lines | default([]) | length
+    # table is not found
+    - (_version.stdout_lines | default([]) | length) == 0
+  tags:
+    - cacti-server-pre-import-cacti-sql

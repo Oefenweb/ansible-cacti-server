@@ -1,0 +1,21 @@
+# tasks file for cacti-server
+---
+- name: checkout | create directory
+  file:
+    path: "{{ cacti_server_checkout_path }}"
+    state: directory
+    owner: "{{ cacti_server_default_owner }}"
+    group: "{{ cacti_server_default_group }}"
+    mode: "{{ cacti_server_default_directory_mode }}"
+  tags:
+    - cacti-server-pre-checkout-directory
+
+- name: checkout | repository
+  git:
+    repo: "{{ cacti_server_checkout_repo }}"
+    dest: "{{ cacti_server_checkout_path }}"
+    version: "release/{{ cacti_server_version }}"
+    force: true
+  register: _git_checkout
+  tags:
+    - cacti-server-pre-checkout-repository

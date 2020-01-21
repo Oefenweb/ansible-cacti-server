@@ -7,14 +7,14 @@
     which php
   changed_when: false
   tags:
-    - cacti-server-check-php
+    - cacti-server-check-pre-php
 
 - name: check | mysqld
   command: >
     which mysqld
   changed_when: false
   tags:
-    - cacti-server-check-mysqld
+    - cacti-server-check-pre-mysqld
 
 - name: check | database
   command: >
@@ -22,7 +22,7 @@
   register: _database
   changed_when: false
   tags:
-    - cacti-server-check-database
+    - cacti-server-check-pre-database
 
 - name: check | version
   command: >
@@ -31,4 +31,4 @@
   changed_when: false
   failed_when: false
   tags:
-    - cacti-server-check-version
+    - cacti-server-check-pre-version

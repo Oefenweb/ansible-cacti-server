@@ -1,5 +1,7 @@
 # defaults file for cacti-server
 ---
+cacti_server_state: ''
+
 cacti_server_version: 1.2.7
 
 cacti_server_config_database_default: cacti
