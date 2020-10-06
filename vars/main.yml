@@ -1,7 +1,7 @@
 # vars file for cacti-server
 ---
 cacti_server_dependencies:
-  - git-core
+  - git
   - snmp
   - snmp-mibs-downloader
   - rrdtool
