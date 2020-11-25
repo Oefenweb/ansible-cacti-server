@@ -1,7 +1,9 @@
 <?php
+{{ ansible_managed | comment('c') }}
+
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2019 The Cacti Group                                 |
+ | Copyright (C) 2004-2020 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -78,6 +80,12 @@ $url_path = '{{ cacti_server_config_url_path }}';
 $cacti_session_name = 'Cacti';
 
 /*
+ * Default Cookie domain - The cookie domain to be used for Cacti
+ */
+
+//$cacti_cookie_domain = 'cacti.net';
+
+/*
  * Save sessions to a database for load balancing
  */
 
@@ -90,13 +98,14 @@ $cacti_db_session = false;
 $disable_log_rotation = false;
 
 /*
- * Optional parameters to define scripts and resource paths. These
+ * Optional parameters to define scripts, resource, and rra paths. These
  * variables become important when using remote poller installs when the
  * scripts and resource files are not in the main Cacti web server path.
  */
 
 //$scripts_path = '/var/www/html/cacti/scripts';
 //$resource_path = '/var/www/html/cacti/resource/';
+//$rra_path = '/var/www/html/cacti/rra/';
 
 /*
  * Optional parameter to define a data input whitelist command string. This
@@ -107,11 +116,24 @@ $disable_log_rotation = false;
 //$input_whitelist = '/usr/local/etc/cacti/input_whitelist.json';
 
 /*
+ * Optional parameter to give explicit path to PHP
+ */
+//$php_path = '/bin/php';
+
+/*
  * Optional parameter to disable the PHP SNMP extension. If not set, defaults
  * to class_exists('SNMP').
  */
 
 //$php_snmp_support = false;
+
+/*
+ * Optional parameter to define the path of the csrf_secret.php path.  This
+ * variable is for packagers who wish to specify an alternate location of
+ * the CRSF secret file.
+ */
+
+//$path_csrf_secret = '/usr/share/cacti/resource/csrf-secret.php';
 
 /*
  * The following are optional variables for debugging low level system
