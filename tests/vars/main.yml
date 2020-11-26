@@ -1,3 +1,8 @@
 # vars file for cacti-server
 ---
+cacti_server_version: 1.2.15
 cacti_server_percona_server_root_password: root
+
+cacti_server_install_path:
+  src: "{{ cacti_server_checkout_path }}"
+  dest: /var/www/html/cacti

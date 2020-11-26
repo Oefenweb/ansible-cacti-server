@@ -52,3 +52,12 @@
     - (_version.stdout_lines | default([]) | length) == 0
   tags:
     - cacti-server-pre-import-cacti-sql
+
+- name: configure | install
+  file:
+    src: "{{ cacti_server_install_path.src }}"
+    dest: "{{ cacti_server_install_path.dest }}"
+    state: link
+    force: true
+  tags:
+    - cacti-server-pre-install

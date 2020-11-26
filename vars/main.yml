@@ -5,6 +5,7 @@ cacti_server_dependencies:
   - snmp
   - snmp-mibs-downloader
   - rrdtool
+  - cron
 
 cacti_server_checkout_repo: https://github.com/Cacti/cacti.git
 cacti_server_checkout_path: /var/lib/ansible/cacti-server/checkouts/cacti

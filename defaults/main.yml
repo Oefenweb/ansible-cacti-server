@@ -15,3 +15,4 @@ cacti_server_config_url_path: /cacti/
 cacti_server_use_poller_php: true
 
 cacti_server_install: []
+cacti_server_install_path: {}
