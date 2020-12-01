@@ -16,4 +16,6 @@ galaxy_info:
     - system
     - networking
     - monitoring
+    - database
+    - sql
 dependencies: []
