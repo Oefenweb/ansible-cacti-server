@@ -7,10 +7,6 @@
     owner: "{{ cacti_server_default_owner }}"
     group: "{{ cacti_server_default_group }}"
     recurse: true
-  with_items:
-    - resource/snmp_queries
-    - resource/script_server
-    - resource/script_queries
-    - scripts
+  with_items: "{{ cacti_server_hardened_directories }}"
   tags:
     - cacti-server-post-make-directories-ro

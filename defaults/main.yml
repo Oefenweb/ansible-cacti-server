@@ -1,8 +1,8 @@
 # defaults file for cacti-server
 ---
-cacti_server_state: ''
-
-cacti_server_version: 1.2.7
+cacti_server_checkout_repo: https://github.com/Cacti/cacti.git
+cacti_server_version: 1.2.16
+cacti_server_git_version: "release/{{ cacti_server_version }}"
 
 cacti_server_config_database_default: cacti
 cacti_server_config_database_hostname: localhost

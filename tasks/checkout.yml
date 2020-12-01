@@ -14,7 +14,7 @@
   git:
     repo: "{{ cacti_server_checkout_repo }}"
     dest: "{{ cacti_server_checkout_path }}"
-    version: "release/{{ cacti_server_version }}"
+    version: "{{ cacti_server_git_version }}"
     force: true
   register: _git_checkout
   tags:

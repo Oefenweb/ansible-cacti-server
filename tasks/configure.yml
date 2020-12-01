@@ -32,11 +32,8 @@
     owner: "{{ cacti_server_user }}"
     group: "{{ cacti_server_group }}"
     recurse: true
-  with_items:
-    - resource/snmp_queries
-    - resource/script_server
-    - resource/script_queries
-    - scripts
+  with_items: "{{ cacti_server_hardened_directories }}"
+  when: _git_checkout is changed
   tags:
     - cacti-server-pre-create-temporary-rw-directories
 

@@ -18,11 +18,23 @@
       tags:
         - cacti-server-pre-configure
 
-  when: cacti_server_state == 'pre'
   tags:
     - configuration
     - cacti-server
     - cacti-server-pre
+
+- name: wait for installation to be finished
+  command: >
+    mysql -Bse "SELECT `cacti` FROM `{{ cacti_server_config_database_default }}`.`version` WHERE `cacti` = '{{ cacti_server_version }}' LIMIT 1;"
+  register: _installation_finished
+  until: (_installation_finished.stdout_lines | default([]) | length) > 0
+  retries: 300
+  delay: 1
+  changed_when: false
+  tags:
+    - configuration
+    - cacti-server
+    - cacti-server-wait
 
 - block:
 
@@ -33,7 +45,6 @@
       tags:
         - cacti-server-post-poller
 
-  when: cacti_server_state == 'post'
   tags:
     - configuration
     - cacti-server
