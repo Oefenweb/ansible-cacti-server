@@ -1,0 +1,159 @@
+# pre test file for cacti-server
+---
+- name: pre | percona server | add repo
+  apt:
+    deb: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_lsb.codename }}_all.deb"
+
+- name: pre | php | add repo
+  apt_repository:
+    repo: 'ppa:ondrej/php'
+    update_cache: true
+    mode: 0644
+
+- name: pre | php | install
+  apt:
+    name:
+      - apache2
+      - libapache2-mod-php7.2
+      - php7.2-cli
+      - php7.2-gd
+      - php7.2-gmp
+      - php7.2-json
+      - php7.2-ldap
+      - php7.2-mbstring
+      - php7.2-mysql
+      - php7.2-opcache
+      - php7.2-snmp
+      - php7.2-xml
+    state: "{{ apt_install_state | default('latest') }}"
+    update_cache: true
+    cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
+
+- name: pre | percona server | preseed
+  debconf:
+    name: "{{ item.name }}"
+    question: "{{ item.question }}"
+    value: "{{ item.value }}"
+    vtype: "{{ item.vtype }}"
+  with_items:
+    - name: "percona-server-server-5.7"
+      question: "percona-server-server-5.7/root-pass"
+      value: "{{ cacti_server_percona_server_root_password }}"
+      vtype: password
+    - name: "percona-server-server-5.7"
+      question: "percona-server-server-5.7/re-root-pass"
+      value: "{{ cacti_server_percona_server_root_password }}"
+      vtype: password
+  changed_when: false
+
+- name: pre | percona server | install
+  apt:
+    name:
+      - percona-server-client-5.7
+      - percona-server-server-5.7
+      - libperconaserverclient20
+      - "python{{ ansible_python_version is version('3', '>=') | ternary('3', '') }}-mysqldb"
+    state: "{{ apt_install_state | default('latest') }}"
+
+- name: pre | percona server | configure
+  copy:
+    dest: '~root/.my.cnf'
+    content: |
+      [client]
+      host = localhost
+      port = 3306
+      user = root
+      password = '{{ (lookup('env', 'USER') == 'travis') | ternary('', cacti_server_percona_server_root_password) }}'
+    owner: root
+    group: root
+    mode: 0600
+
+- name: pre | percona server | add zoneinfo
+  shell: >
+    mysql_tzinfo_to_sql /usr/share/zoneinfo | tee /tmp/zoneinfo.sql | mysql --database=mysql
+  args:
+    creates: /tmp/zoneinfo.sql
+
+- name: pre | percona server | ensure database
+  mysql_db:
+    name: "{{ cacti_server_config_database_default }}"
+    encoding: utf8mb4
+    collation: utf8mb4_unicode_ci
+
+- name: pre | percona server | ensure grants
+  mysql_user:
+    name: "{{ cacti_server_config_database_username }}"
+    password: "{{ cacti_server_config_database_password }}"
+    priv: "{{ cacti_server_config_database_default }}.*:ALL/mysql.time_zone_name:SELECT"
+
+- name: pre | php | configure memory_limit
+  lineinfile:
+    path: "/etc/php/7.2/{{ item }}/php.ini"
+    regexp: '^memory_limit = .*'
+    line: 'memory_limit = 512M'
+  register: _memory_limit
+  with_items:
+    - apache2
+
+- name: pre | php | configure max_execution_time
+  lineinfile:
+    path: "/etc/php/7.2/{{ item }}/php.ini"
+    regexp: '^max_execution_time = .*'
+    line: 'max_execution_time = 60'
+  register: _max_execution_time
+  with_items:
+    - apache2
+
+- name: pre | php | configure timezone
+  lineinfile:
+    path: "/etc/php/7.2/{{ item }}/php.ini"
+    line: 'date.timezone = Europe/Amsterdam'
+    insertafter: '^;date.timezone.*'
+  notify: reload apache2
+  with_items:
+    - apache2
+    - cli
+
+- name: pre | percona server | configure encoding
+  lineinfile:
+    path: /etc/mysql/percona-server.conf.d/mysqld.cnf
+    line: "{{ item }}"
+    insertafter: EOF
+  notify: restart mysql
+  with_items:
+    - character_set_server = utf8mb4
+    - collation_server = utf8mb4_unicode_ci
+    - skip-character-set-client-handshake
+    - init_connect = 'SET collation_connection = utf8mb4_unicode_ci; SET NAMES utf8mb4;'
+
+- block:
+
+  - name: pre | travis | interactive installer | fool
+    apt:
+      name:
+        - at
+      state: "{{ apt_install_state | default('latest') }}"
+      update_cache: true
+      cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
+
+  - name: pre | travis | interactive installer | fool
+    copy:
+      content: |
+        #!/usr/bin/env bash
+        #
+        while true; do
+          affectedRows="$(mysql -Bse 'UPDATE `{{ cacti_server_config_database_default }}`.`version` SET `cacti` = "{{ cacti_server_version }}"; SELECT ROW_COUNT();' 2> /dev/null)";
+          if [ $? -eq 0 ]; then
+            break;
+          fi
+          sleep 1;
+        done
+      dest: "{{ cacti_server_interactive_installer_fooler }}"
+
+  - name: pre | travis | interactive installer | fool
+    # at module does not support now :-(
+    command: >
+      at now -f {{ cacti_server_interactive_installer_fooler }}
+    changed_when: false
+
+  when: lookup('env', 'USER') == 'travis'

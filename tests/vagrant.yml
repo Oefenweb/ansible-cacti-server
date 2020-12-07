@@ -1,0 +1,13 @@
+# test file for cacti-server
+---
+- hosts: all
+  remote_user: vagrant
+  become: true
+  pre_tasks:
+    - name: include vars
+      include_vars: main.yml
+    - include: pre.yml
+  roles:
+    - ../../
+  handlers:
+    - include: handlers/main.yml

@@ -1,0 +1,18 @@
+# defaults file for cacti-server
+---
+cacti_server_checkout_repo: https://github.com/Cacti/cacti.git
+cacti_server_version: 1.2.16
+cacti_server_git_version: "release/{{ cacti_server_version }}"
+
+cacti_server_config_database_default: cacti
+cacti_server_config_database_hostname: localhost
+cacti_server_config_database_username: cacti
+cacti_server_config_database_password: cacti
+cacti_server_config_database_port: 3306
+
+cacti_server_config_url_path: /cacti/
+
+cacti_server_use_poller_php: true
+
+cacti_server_install: []
+cacti_server_install_path: {}

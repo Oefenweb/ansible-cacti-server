@@ -1,0 +1,12 @@
+# tasks file for cacti-server
+---
+- name: harden | make directories ro
+  file:
+    path: "{{ cacti_server_checkout_path }}/{{ item }}/"
+    state: directory
+    owner: "{{ cacti_server_default_owner }}"
+    group: "{{ cacti_server_default_group }}"
+    recurse: true
+  with_items: "{{ cacti_server_hardened_directories }}"
+  tags:
+    - cacti-server-post-make-directories-ro

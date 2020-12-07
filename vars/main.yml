@@ -1,0 +1,27 @@
+# vars file for cacti-server
+---
+cacti_server_dependencies:
+  - git
+  - snmp
+  - snmp-mibs-downloader
+  - rrdtool
+  - cron
+
+cacti_server_checkout_path: /var/lib/ansible/cacti-server/checkouts/cacti
+
+cacti_server_default_owner: root
+cacti_server_default_group: root
+cacti_server_default_directory_mode: '0755'
+cacti_server_default_file_mode: '0644'
+
+cacti_server_user: www-data
+cacti_server_group: www-data
+
+cacti_server_config_file: "{{ cacti_server_checkout_path }}/include/config.php"
+cacti_server_poller_file: "{{ cacti_server_checkout_path }}/poller.php"
+
+cacti_server_hardened_directories:
+  - resource/snmp_queries
+  - resource/script_server
+  - resource/script_queries
+  - scripts
