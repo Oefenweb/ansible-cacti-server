@@ -125,3 +125,35 @@
     - collation_server = utf8mb4_unicode_ci
     - skip-character-set-client-handshake
     - init_connect = 'SET collation_connection = utf8mb4_unicode_ci; SET NAMES utf8mb4;'
+
+- block:
+
+  - name: pre | travis | interactive installer | fool
+    apt:
+      name:
+        - at
+      state: "{{ apt_install_state | default('latest') }}"
+      update_cache: true
+      cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
+
+  - name: pre | travis | interactive installer | fool
+    copy:
+      content: |
+        #!/usr/bin/env bash
+        #
+        while true; do
+          affectedRows="$(mysql -Bse 'UPDATE `{{ cacti_server_config_database_default }}`.`version` SET `cacti` = "{{ cacti_server_version }}"; SELECT ROW_COUNT();' 2> /dev/null)";
+          if [ $? -eq 0 ]; then
+            break;
+          fi
+          sleep 1;
+        done
+      dest: "{{ cacti_server_interactive_installer_fooler }}"
+
+  - name: pre | travis | interactive installer | fool
+    # at module does not support now :-(
+    command: >
+      at now -f {{ cacti_server_interactive_installer_fooler }}
+    changed_when: false
+
+  when: lookup('env', 'USER') == 'travis'
