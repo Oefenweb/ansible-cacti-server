@@ -2,7 +2,7 @@
 ---
 - name: pre | percona server | add repo
   apt:
-    deb: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_lsb.codename }}_all.deb"
+    deb: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_distribution_release }}_all.deb"
 
 - name: pre | php | add repo
   apt_repository:
