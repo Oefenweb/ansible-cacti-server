@@ -1,4 +1,4 @@
-# handlers file for cacti-server
+# handlers file
 ---
 - name: restart apache2
   service:

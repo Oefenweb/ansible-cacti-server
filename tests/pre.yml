@@ -1,4 +1,4 @@
-# pre test file for cacti-server
+# pre test file
 ---
 - name: pre | percona server | add repo
   apt:

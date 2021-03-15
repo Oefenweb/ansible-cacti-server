@@ -1,4 +1,4 @@
-# tasks file for cacti-server
+# tasks file
 ---
 - name: harden | make directories ro
   file:

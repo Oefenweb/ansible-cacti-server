@@ -1,4 +1,4 @@
-# defaults file for cacti-server
+# defaults file
 ---
 cacti_server_checkout_repo: https://github.com/Cacti/cacti.git
 cacti_server_version: 1.2.16
