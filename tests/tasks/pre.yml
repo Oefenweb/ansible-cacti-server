@@ -22,20 +22,18 @@
   apt:
     name:
       - apache2
-      - libapache2-mod-php7.2
-      - php7.2-cli
-      - php7.2-gd
-      - php7.2-gmp
-      - php7.2-json
-      - php7.2-ldap
-      - php7.2-mbstring
-      - php7.2-mysql
-      - php7.2-opcache
-      - php7.2-snmp
-      - php7.2-xml
+      - libapache2-mod-php7.4
+      - php7.4-cli
+      - php7.4-gd
+      - php7.4-gmp
+      - php7.4-json
+      - php7.4-ldap
+      - php7.4-mbstring
+      - php7.4-mysql
+      - php7.4-opcache
+      - php7.4-snmp
+      - php7.4-xml
     state: "{{ apt_install_state | default('latest') }}"
-    update_cache: true
-    cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
 
 - name: percona server | preseed
   debconf:
@@ -71,7 +69,7 @@
       host = localhost
       port = 3306
       user = root
-      password = '{{ (lookup('env', 'USER') == 'travis') | ternary('', cacti_server_percona_server_root_password) }}'
+      password = '{{ cacti_server_percona_server_root_password }}'
     owner: root
     group: root
     mode: 0600
@@ -96,7 +94,7 @@
 
 - name: php | configure memory_limit
   lineinfile:
-    path: "/etc/php/7.2/{{ item }}/php.ini"
+    path: "/etc/php/7.4/{{ item }}/php.ini"
     regexp: '^memory_limit = .*'
     line: 'memory_limit = 512M'
   register: _memory_limit
@@ -105,7 +103,7 @@
 
 - name: php | configure max_execution_time
   lineinfile:
-    path: "/etc/php/7.2/{{ item }}/php.ini"
+    path: "/etc/php/7.4/{{ item }}/php.ini"
     regexp: '^max_execution_time = .*'
     line: 'max_execution_time = 60'
   register: _max_execution_time
@@ -114,7 +112,7 @@
 
 - name: php | configure timezone
   lineinfile:
-    path: "/etc/php/7.2/{{ item }}/php.ini"
+    path: "/etc/php/7.4/{{ item }}/php.ini"
     line: 'date.timezone = Europe/Amsterdam'
     insertafter: '^;date.timezone.*'
   notify: reload apache2
