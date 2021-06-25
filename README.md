@@ -12,7 +12,7 @@ Set up cacti in Debian-like systems (server side).
 #### Variables
 
 * `cacti_server_checkout_repo`: [default: `https://github.com/Cacti/cacti.git`]: Cacti git repo
-* `cacti_server_version`: [default: `1.2.16`]: Only used in `{{ cacti_server_git_version }}`
+* `cacti_server_version`: [default: `1.2.17`]: Only used in `{{ cacti_server_git_version }}`
 * `cacti_server_git_version`: [default: `"release/{{ cacti_server_version }}"`]: What version of Cacti to check out (set up). This can be the full 40-character SHA-1 hash, the literal string HEAD, a branch name, or a tag name
 
 * `cacti_server_config_database_default`: [default: `cacti`]: Database name

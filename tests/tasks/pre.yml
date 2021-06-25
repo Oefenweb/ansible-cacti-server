@@ -153,6 +153,11 @@
         cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
 
     - name: interactive installer | fool
+      service:
+        name: atd
+        state: started
+
+    - name: interactive installer | fool
       copy:
         content: |
           #!/usr/bin/env bash
@@ -173,4 +178,4 @@
         at now -f {{ cacti_server_interactive_installer_fooler }}
       changed_when: false
 
-  when: lookup('env', 'USER') != 'vagrant'
+  when: ansible_virtualization_type != 'virtualbox'
