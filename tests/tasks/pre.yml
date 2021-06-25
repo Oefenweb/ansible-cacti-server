@@ -163,4 +163,4 @@
         at now -f {{ cacti_server_interactive_installer_fooler }}
       changed_when: false
 
-  when: lookup('env', 'USER') != 'vagrant
+  when: lookup('env', 'USER') != 'vagrant'

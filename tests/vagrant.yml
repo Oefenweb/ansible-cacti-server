@@ -11,4 +11,4 @@
   roles:
     - ../../
   handlers:
-    - include: "{{ playbook_dir }}/handlers/main.yml"
+    - import_tasks: "{{ playbook_dir }}/handlers/main.yml"
