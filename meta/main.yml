@@ -2,7 +2,7 @@
 ---
 galaxy_info:
   namespace: oefenweb
-  role_name: cacti-server
+  role_name: cacti_server
   author: Mischa ter Smitten
   company: Oefenweb.nl B.V.
   description: Set up cacti in Debian-like systems (server side)

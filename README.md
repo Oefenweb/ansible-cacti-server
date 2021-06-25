@@ -1,7 +1,7 @@
 ## cacti-server
 
 [![Build Status](https://travis-ci.org/Oefenweb/ansible-cacti-server.svg?branch=master)](https://travis-ci.org/Oefenweb/ansible-cacti-server)
-[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-cacti--server-blue.svg)](https://galaxy.ansible.com/Oefenweb/cacti-server/)
+[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-cacti--server-blue.svg)](https://galaxy.ansible.com/Oefenweb/cacti_server/)
 
 Set up cacti in Debian-like systems (server side).
 
