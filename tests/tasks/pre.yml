@@ -2,6 +2,11 @@
 ---
 - name: percona server | add repo
   apt:
+    update_cache: true
+    cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
+
+- name: percona server | add repo
+  apt:
     deb: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_distribution_release }}_all.deb"
 
 - name: php | add repo
