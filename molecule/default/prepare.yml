@@ -4,7 +4,7 @@
   become: true
   tasks:
     - name: include vars
-      include_vars: "{{ playbook_dir }}/../../tests/defaults/main.yml"
+      include_vars: "{{ playbook_dir }}/../../defaults/main.yml"
     - name: include vars
       include_vars: "{{ playbook_dir }}/../../tests/vars/main.yml"
     - name: include tasks
