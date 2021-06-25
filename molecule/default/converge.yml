@@ -7,5 +7,3 @@
       include_vars: "{{ playbook_dir }}/../../tests/vars/main.yml"
   roles:
     - ../../../
-  handlers:
-    - include: "{{ playbook_dir }}/../../tests/handlers/main.yml"

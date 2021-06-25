@@ -1,5 +1,13 @@
 # pre test file
 ---
+- name: percona server | add repo | dependencies
+  apt:
+    name:
+      - software-properties-common
+      - dirmngr
+    update_cache: true
+    cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
+
 - name: percona server | add repo
   apt:
     deb: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_distribution_release }}_all.deb"
@@ -9,25 +17,6 @@
     repo: 'ppa:ondrej/php'
     update_cache: true
     mode: 0644
-
-- name: php | install
-  apt:
-    name:
-      - apache2
-      - libapache2-mod-php7.4
-      - php7.4-cli
-      - php7.4-gd
-      - php7.4-gmp
-      - php7.4-json
-      - php7.4-ldap
-      - php7.4-mbstring
-      - php7.4-mysql
-      - php7.4-opcache
-      - php7.4-snmp
-      - php7.4-xml
-    state: "{{ apt_install_state | default('latest') }}"
-    update_cache: true
-    cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
 
 - name: percona server | preseed
   debconf:
@@ -55,6 +44,40 @@
       - "python{{ ansible_python_version is version('3', '>=') | ternary('3', '') }}-mysqldb"
     state: "{{ apt_install_state | default('latest') }}"
 
+- name: php | install
+  apt:
+    name:
+      - apache2
+      - libapache2-mod-php7.4
+      - php7.4-cli
+      - php7.4-gd
+      - php7.4-gmp
+      - php7.4-json
+      - php7.4-ldap
+      - php7.4-mbstring
+      - php7.4-mysql
+      - php7.4-opcache
+      - php7.4-snmp
+      - php7.4-xml
+    state: "{{ apt_install_state | default('latest') }}"
+
+- name: percona server | configure encoding
+  lineinfile:
+    path: /etc/mysql/percona-server.conf.d/mysqld.cnf
+    line: "{{ item }}"
+    insertafter: EOF
+  notify: restart mysql
+  with_items:
+    - character_set_server = utf8mb4
+    - collation_server = utf8mb4_unicode_ci
+    - skip-character-set-client-handshake
+    - init_connect = 'SET collation_connection = utf8mb4_unicode_ci; SET NAMES utf8mb4;'
+
+- name: percona server | start
+  service:
+    name: mysql
+    state: started
+
 - name: percona server | configure
   copy:
     dest: '~root/.my.cnf'
@@ -63,7 +86,7 @@
       host = localhost
       port = 3306
       user = root
-      password = '{{ (lookup('env', 'USER') == 'travis') | ternary('', cacti_server_percona_server_root_password) }}'
+      password = '{{ cacti_server_percona_server_root_password }}'
     owner: root
     group: root
     mode: 0600
@@ -114,17 +137,10 @@
     - apache2
     - cli
 
-- name: percona server | configure encoding
-  lineinfile:
-    path: /etc/mysql/percona-server.conf.d/mysqld.cnf
-    line: "{{ item }}"
-    insertafter: EOF
-  notify: restart mysql
-  with_items:
-    - character_set_server = utf8mb4
-    - collation_server = utf8mb4_unicode_ci
-    - skip-character-set-client-handshake
-    - init_connect = 'SET collation_connection = utf8mb4_unicode_ci; SET NAMES utf8mb4;'
+- name: apache server | start
+  service:
+    name: apache2
+    state: started
 
 - block:
 
@@ -135,6 +151,11 @@
         state: "{{ apt_install_state | default('latest') }}"
         update_cache: true
         cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
+
+    - name: interactive installer | fool
+      service:
+        name: atd
+        state: started
 
     - name: interactive installer | fool
       copy:
@@ -149,6 +170,7 @@
             sleep 1;
           done
         dest: "{{ cacti_server_interactive_installer_fooler }}"
+        mode: 0755
 
     - name: interactive installer | fool
       # at module does not support now :-(
@@ -156,4 +178,4 @@
         at now -f {{ cacti_server_interactive_installer_fooler }}
       changed_when: false
 
-  when: lookup('env', 'USER') != 'vagrant
+  when: ansible_virtualization_type != 'virtualbox'
