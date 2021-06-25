@@ -149,6 +149,7 @@
             sleep 1;
           done
         dest: "{{ cacti_server_interactive_installer_fooler }}"
+        mode: 0755
 
     - name: interactive installer | fool
       # at module does not support now :-(
