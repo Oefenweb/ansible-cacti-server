@@ -12,6 +12,12 @@
   apt:
     deb: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_distribution_release }}_all.deb"
 
+- name: php | add repo
+  apt_repository:
+    repo: 'ppa:ondrej/php'
+    update_cache: true
+    mode: 0644
+
 - name: percona server | preseed
   debconf:
     name: "{{ item.name }}"
@@ -36,6 +42,23 @@
       - percona-server-server-5.7
       - libperconaserverclient20
       - "python{{ ansible_python_version is version('3', '>=') | ternary('3', '') }}-mysqldb"
+    state: "{{ apt_install_state | default('latest') }}"
+
+- name: php | install
+  apt:
+    name:
+      - apache2
+      - libapache2-mod-php7.4
+      - php7.4-cli
+      - php7.4-gd
+      - php7.4-gmp
+      - php7.4-json
+      - php7.4-ldap
+      - php7.4-mbstring
+      - php7.4-mysql
+      - php7.4-opcache
+      - php7.4-snmp
+      - php7.4-xml
     state: "{{ apt_install_state | default('latest') }}"
 
 - name: percona server | configure encoding
@@ -85,29 +108,6 @@
     name: "{{ cacti_server_config_database_username }}"
     password: "{{ cacti_server_config_database_password }}"
     priv: "{{ cacti_server_config_database_default }}.*:ALL/mysql.time_zone_name:SELECT"
-
-- name: php | add repo
-  apt_repository:
-    repo: 'ppa:ondrej/php'
-    update_cache: true
-    mode: 0644
-
-- name: php | install
-  apt:
-    name:
-      - apache2
-      - libapache2-mod-php7.4
-      - php7.4-cli
-      - php7.4-gd
-      - php7.4-gmp
-      - php7.4-json
-      - php7.4-ldap
-      - php7.4-mbstring
-      - php7.4-mysql
-      - php7.4-opcache
-      - php7.4-snmp
-      - php7.4-xml
-    state: "{{ apt_install_state | default('latest') }}"
 
 - name: php | configure memory_limit
   lineinfile:
