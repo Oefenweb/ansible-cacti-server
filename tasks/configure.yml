@@ -16,7 +16,7 @@
 
 - name: configure | update config file
   template:
-    src: "{{ cacti_server_config_file.lstrip('/') }}.j2"
+    src: "config.php.j2"
     dest: "{{ cacti_server_config_file }}"
     owner: "{{ cacti_server_default_owner }}"
     group: "{{ cacti_server_group }}"
