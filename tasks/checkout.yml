@@ -1,7 +1,7 @@
 # tasks file
 ---
 - name: checkout | create directory
-  file:
+  ansible.builtin.file:
     path: "{{ cacti_server_checkout_path }}"
     state: directory
     owner: "{{ cacti_server_default_owner }}"
@@ -11,7 +11,7 @@
     - cacti-server-pre-checkout-directory
 
 - name: checkout | repository
-  git:
+  ansible.builtin.git:
     repo: "{{ cacti_server_checkout_repo }}"
     dest: "{{ cacti_server_checkout_path }}"
     version: "{{ cacti_server_git_version }}"

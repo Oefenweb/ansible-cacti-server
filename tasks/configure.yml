@@ -1,7 +1,7 @@
 # tasks file
 ---
 - name: configure | create (permanent) rw directories
-  file:
+  ansible.builtin.file:
     path: "{{ cacti_server_checkout_path }}/{{ item }}/"
     state: directory
     owner: "{{ cacti_server_user }}"
@@ -15,7 +15,7 @@
     - cacti-server-pre-create-permanent-rw-directories
 
 - name: configure | update config file
-  template:
+  ansible.builtin.template:
     src: "{{ cacti_server_config_file.lstrip('/') }}.j2"
     dest: "{{ cacti_server_config_file }}"
     owner: "{{ cacti_server_default_owner }}"
@@ -26,7 +26,7 @@
     - cacti-server-pre-update-config-file
 
 - name: configure | create (temporary) rw directories
-  file:
+  ansible.builtin.file:
     path: "{{ cacti_server_checkout_path }}/{{ item }}/"
     state: directory
     owner: "{{ cacti_server_user }}"
@@ -38,7 +38,7 @@
     - cacti-server-pre-create-temporary-rw-directories
 
 - name: configure | import cacti.sql
-  mysql_db:
+  community.mysql.mysql_db:
     state: import
     name: "{{ cacti_server_config_database_default }}"
     target: "{{ cacti_server_checkout_path }}/cacti.sql"
@@ -51,7 +51,7 @@
     - cacti-server-pre-import-cacti-sql
 
 - name: configure | install
-  file:
+  ansible.builtin.file:
     src: "{{ cacti_server_install_path.src }}"
     dest: "{{ cacti_server_install_path.dest }}"
     state: link

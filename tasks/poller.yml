@@ -1,7 +1,7 @@
 # tasks file
 ---
 - name: poller | schedule
-  cron:
+  ansible.builtin.cron:
     name: "{{ cacti_server_poller_file | basename }}"
     job: "php {{ cacti_server_poller_file }} > /dev/null 2>&1"
     minute: "*/5"

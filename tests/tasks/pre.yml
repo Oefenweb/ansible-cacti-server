@@ -1,7 +1,7 @@
 # pre test file
 ---
 - name: percona server | add repo | dependencies
-  apt:
+  ansible.builtin.apt:
     name:
       - software-properties-common
       - dirmngr
@@ -9,17 +9,17 @@
     cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
 
 - name: percona server | add repo
-  apt:
+  ansible.builtin.apt:
     deb: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_distribution_release }}_all.deb"
 
 - name: php | add repo
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: 'ppa:ondrej/php'
     update_cache: true
     mode: 0644
 
 - name: percona server | preseed
-  debconf:
+  ansible.builtin.debconf:
     name: "{{ item.name }}"
     question: "{{ item.question }}"
     value: "{{ item.value }}"
@@ -36,7 +36,7 @@
   changed_when: false
 
 - name: percona server | install
-  apt:
+  ansible.builtin.apt:
     name:
       - percona-server-client-5.7
       - percona-server-server-5.7
@@ -45,13 +45,14 @@
     state: "{{ apt_install_state | default('latest') }}"
 
 - name: php | install
-  apt:
+  ansible.builtin.apt:
     name:
       - apache2
       - libapache2-mod-php7.4
       - php7.4-cli
       - php7.4-gd
       - php7.4-gmp
+      - php7.4-intl
       - php7.4-json
       - php7.4-ldap
       - php7.4-mbstring
@@ -62,7 +63,7 @@
     state: "{{ apt_install_state | default('latest') }}"
 
 - name: percona server | configure encoding
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/mysql/percona-server.conf.d/mysqld.cnf
     line: "{{ item }}"
     insertafter: EOF
@@ -74,12 +75,12 @@
     - init_connect = 'SET collation_connection = utf8mb4_unicode_ci; SET NAMES utf8mb4;'
 
 - name: percona server | start
-  service:
+  ansible.builtin.service:
     name: mysql
     state: started
 
 - name: percona server | configure
-  copy:
+  ansible.builtin.copy:
     dest: '~root/.my.cnf'
     content: |
       [client]
@@ -92,25 +93,25 @@
     mode: 0600
 
 - name: percona server | add zoneinfo
-  shell: >
+  ansible.builtin.shell: >
     mysql_tzinfo_to_sql /usr/share/zoneinfo | tee /tmp/zoneinfo.sql | mysql --database=mysql
   args:
     creates: /tmp/zoneinfo.sql
 
 - name: percona server | ensure database
-  mysql_db:
+  community.mysql.mysql_db:
     name: "{{ cacti_server_config_database_default }}"
     encoding: utf8mb4
     collation: utf8mb4_unicode_ci
 
 - name: percona server | ensure grants
-  mysql_user:
+  community.mysql.mysql_user:
     name: "{{ cacti_server_config_database_username }}"
     password: "{{ cacti_server_config_database_password }}"
     priv: "{{ cacti_server_config_database_default }}.*:ALL/mysql.time_zone_name:SELECT"
 
 - name: php | configure memory_limit
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/php/7.4/{{ item }}/php.ini"
     regexp: '^memory_limit = .*'
     line: 'memory_limit = 512M'
@@ -119,7 +120,7 @@
     - apache2
 
 - name: php | configure max_execution_time
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/php/7.4/{{ item }}/php.ini"
     regexp: '^max_execution_time = .*'
     line: 'max_execution_time = 60'
@@ -128,7 +129,7 @@
     - apache2
 
 - name: php | configure timezone
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/php/7.4/{{ item }}/php.ini"
     line: 'date.timezone = Europe/Amsterdam'
     insertafter: '^;date.timezone.*'
@@ -138,14 +139,14 @@
     - cli
 
 - name: apache server | start
-  service:
+  ansible.builtin.service:
     name: apache2
     state: started
 
 - block:
 
     - name: interactive installer | fool
-      apt:
+      ansible.builtin.apt:
         name:
           - at
         state: "{{ apt_install_state | default('latest') }}"
@@ -153,12 +154,12 @@
         cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
 
     - name: interactive installer | fool
-      service:
+      ansible.builtin.service:
         name: atd
         state: started
 
     - name: interactive installer | fool
-      copy:
+      ansible.builtin.copy:
         content: |
           #!/usr/bin/env bash
           #
@@ -174,7 +175,7 @@
 
     - name: interactive installer | fool
       # at module does not support now :-(
-      command: >
+      ansible.builtin.command: >
         at now -f {{ cacti_server_interactive_installer_fooler }}
       changed_when: false
 
