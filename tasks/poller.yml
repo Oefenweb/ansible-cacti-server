@@ -4,7 +4,7 @@
   ansible.builtin.cron:
     name: "{{ cacti_server_poller_file | basename }}"
     job: "php {{ cacti_server_poller_file }} > /dev/null 2>&1"
-    minute: "*/5"
+    minute: "*/{{ cacti_server_poller_interval }}"
     state: "{{ cacti_server_use_poller_php | ternary('present', 'absent') }}"
     cron_file: cacti
     user: "{{ cacti_server_user }}"
