@@ -143,8 +143,9 @@
     name: apache2
     state: started
 
-- block:
-
+- name: interactive installer
+  when: ansible_virtualization_type != 'virtualbox'
+  block:
     - name: interactive installer | fool
       ansible.builtin.apt:
         name:
@@ -178,5 +179,3 @@
       ansible.builtin.command: >
         at now -f {{ cacti_server_interactive_installer_fooler }}
       changed_when: false
-
-  when: ansible_virtualization_type != 'virtualbox'

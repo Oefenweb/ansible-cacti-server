@@ -8,6 +8,7 @@
     - name: include vars
       ansible.builtin.include_vars: "{{ playbook_dir }}/../../tests/vars/main.yml"
     - name: include tasks
-      ansible.builtin.include: "{{ playbook_dir }}/../../tests/tasks/pre.yml"
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/../../tests/tasks/pre.yml"
   handlers:
-    - ansible.builtin.import_tasks: "{{ playbook_dir }}/../../tests/handlers/main.yml"
+    - name: include handlers
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/../../tests/handlers/main.yml"
