@@ -1,6 +1,6 @@
 # vars file
 ---
-cacti_server_version: 1.2.16
+cacti_server_version: 1.2.22
 cacti_server_percona_server_root_password: root
 
 cacti_server_install_path:

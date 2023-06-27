@@ -1,7 +1,7 @@
 # tasks file
 ---
 - name: install | dependencies
-  apt:
+  ansible.builtin.apt:
     name: "{{ cacti_server_dependencies }}"
     state: "{{ apt_install_state | default('latest') }}"
     update_cache: true
@@ -10,7 +10,7 @@
     - cacti-server-install-dependencies
 
 - name: install | additional
-  apt:
+  ansible.builtin.apt:
     name: "{{ cacti_server_install }}"
     state: "{{ apt_install_state | default('latest') }}"
     update_cache: true

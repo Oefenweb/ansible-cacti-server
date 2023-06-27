@@ -1,30 +1,33 @@
 # tasks file
 ---
-- block:
-
-    - include: check.yml
-      tags:
-        - cacti-server-pre-check
-
-    - include: install.yml
-      tags:
-        - cacti-server-pre-install
-
-    - include: checkout.yml
-      tags:
-        - cacti-server-pre-checkout
-
-    - include: configure.yml
-      tags:
-        - cacti-server-pre-configure
-
+- name: pre
   tags:
     - configuration
     - cacti-server
     - cacti-server-pre
+  block:
+    - name: check
+      ansible.builtin.import_tasks: check.yml
+      tags:
+        - cacti-server-pre-check
+
+    - name: install
+      ansible.builtin.import_tasks: install.yml
+      tags:
+        - cacti-server-pre-install
+
+    - name: checkout
+      ansible.builtin.import_tasks: checkout.yml
+      tags:
+        - cacti-server-pre-checkout
+
+    - name: configure
+      ansible.builtin.import_tasks: configure.yml
+      tags:
+        - cacti-server-pre-configure
 
 - name: wait for installation to be finished
-  command: >
+  ansible.builtin.command: >
     mysql -Bse "SELECT `cacti` FROM `{{ cacti_server_config_database_default }}`.`version` WHERE `cacti` = '{{ cacti_server_version }}' LIMIT 1;"
   register: _installation_finished
   until: (_installation_finished.stdout_lines | default([]) | length) > 0
@@ -36,16 +39,17 @@
     - cacti-server
     - cacti-server-wait
 
-- block:
-
-    - include: harden.yml
-      tags:
-        - cacti-server-post-harden
-    - include: poller.yml
-      tags:
-        - cacti-server-post-poller
-
+- name: post
   tags:
     - configuration
     - cacti-server
     - cacti-server-post
+  block:
+    - name: harden
+      ansible.builtin.import_tasks: harden.yml
+      tags:
+        - cacti-server-post-harden
+    - name: poller
+      ansible.builtin.import_tasks: poller.yml
+      tags:
+        - cacti-server-post-poller

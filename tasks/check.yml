@@ -3,21 +3,21 @@
 # TODO: Check for first install
 
 - name: check | php
-  command: >
+  ansible.builtin.command: >
     which php
   changed_when: false
   tags:
     - cacti-server-check-pre-php
 
 - name: check | mysqld
-  command: >
+  ansible.builtin.command: >
     which mysqld
   changed_when: false
   tags:
     - cacti-server-check-pre-mysqld
 
 - name: check | database
-  command: >
+  ansible.builtin.command: >
     mysql -Bse "SHOW DATABASES LIKE '{{ cacti_server_config_database_default }}';"
   register: _database
   changed_when: false
@@ -25,7 +25,7 @@
     - cacti-server-check-pre-database
 
 - name: check | version
-  command: >
+  ansible.builtin.command: >
     mysql -Bse "SELECT `cacti` FROM `{{ cacti_server_config_database_default }}`.`version` LIMIT 1;"
   register: _version
   changed_when: false
