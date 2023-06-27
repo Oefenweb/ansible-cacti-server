@@ -25,3 +25,4 @@ cacti_server_hardened_directories:
   - resource/script_server
   - resource/script_queries
   - scripts
+  - include/vendor/csrf
