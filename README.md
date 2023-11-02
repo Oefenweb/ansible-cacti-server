@@ -47,7 +47,7 @@ None
 ---
 - hosts: all
   roles:
-    - cacti-server
+    - oefenweb.cacti-server
   vars:
     cacti_server_install_path:
       src: "{{ cacti_server_checkout_path }}"
