@@ -20,7 +20,7 @@
     dest: "{{ cacti_server_config_file }}"
     owner: "{{ cacti_server_default_owner }}"
     group: "{{ cacti_server_group }}"
-    mode: 0640
+    mode: '0640'
     validate: 'php -l %s'
   tags:
     - cacti-server-pre-update-config-file
@@ -44,9 +44,9 @@
     target: "{{ cacti_server_checkout_path }}/cacti.sql"
   when:
     # database is found
-    - _database.stdout_lines | default([]) | length
+    - _database.stdout_lines | default([]) | length > 0
     # table is not found
-    - (_version.stdout_lines | default([]) | length) == 0
+    - _version.stdout_lines | default([]) | length == 0
   tags:
     - cacti-server-pre-import-cacti-sql
 

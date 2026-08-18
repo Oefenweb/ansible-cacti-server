@@ -16,7 +16,7 @@
   ansible.builtin.apt_repository:
     repo: 'ppa:ondrej/php'
     update_cache: true
-    mode: 0644
+    mode: '0644'
 
 - name: percona server | preseed
   ansible.builtin.debconf:
@@ -90,7 +90,7 @@
       password = '{{ cacti_server_percona_server_root_password }}'
     owner: root
     group: root
-    mode: 0600
+    mode: '0600'
 
 - name: percona server | add zoneinfo
   ansible.builtin.shell: >
@@ -172,7 +172,7 @@
             sleep 1;
           done
         dest: "{{ cacti_server_interactive_installer_fooler }}"
-        mode: 0755
+        mode: '0755'
 
     - name: interactive installer | fool
       # at module does not support now :-(
