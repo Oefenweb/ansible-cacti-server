@@ -23,7 +23,7 @@ Set up cacti in Debian-like systems (server side).
 
 * `cacti_server_config_url_path`: [default: `/cacti/`]: The (default) path of your cacti install
 
-* `cacti_server_use_poller_php`: [default: `true`]: Whether or not to install a crontab for the poller
+* `cacti_server_use_poller_php`: [default: `true`]: Whether to install a crontab for the poller
 
 * `cacti_server_install`: [default: `[]`]: Additional packages to install
 
