@@ -5,3 +5,4 @@ warn_list:
   - name[casing]
   - no-handler
   - risky-shell-pipe
+  - fqcn[canonical]
